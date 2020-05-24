@@ -2,10 +2,8 @@
 
 mkdir -p reports
 
-if [[ -f log* && -f fulldump.txt ]]; then
-	mv log* reports
-	mv fulldump.txt reports
-fi
+mv log* reports
+mv fulldump.txt reports
 
 cd reports
 gnuplot -p << EOF
