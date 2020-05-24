@@ -5,8 +5,41 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/sysinfo.h>
+#include <stdbool.h>
 
 #define PROCSTATFILE "/proc/stat"
+
+static FILE * all_cores_fileptr[8];
+static int _cpus;
+
+int cpucount(void);
+
+bool init_all_cores(){
+	char name[20], filename[20];
+
+	_cpus=cpucount();
+
+	for(int n=0; n< _cpus; n++){
+		sprintf(name, "logcpu%d", n);
+		all_cores_fileptr[n] = fopen(name, "w");
+	    	if (all_cores_fileptr[n] == NULL){
+		        printf("Could not open file"); 
+		        return false; 
+		}
+	}
+	return true;
+
+}
+
+bool all_cpus_log(int timestamp, double * cpu_log){
+
+	for (int n = 0; n < _cpus; n++){
+	    	//printf("cpu%d:%.2f%%\n", n, percent[n]);
+		fprintf(all_cores_fileptr[n], "%d ",timestamp);
+		fprintf(all_cores_fileptr[n], "%lf\n", cpu_log[n]);
+        }
+
+}
 
 void eprintf(const char *fmt, ...) {
     va_list ap;
@@ -46,7 +79,6 @@ int cpucount(void) {
 double *cpuusage(void) {
     int i;
     char buf[BUFSIZ];
-    int cpus;
     int cpuid;
     int r;
     static unsigned long long *lastuser, *lastnice, *lastsystem, *lastidle;
@@ -55,30 +87,28 @@ double *cpuusage(void) {
     static double *percent;
     FILE *fp;
 
-    cpus = cpucount();
-
     if (!lastuser)
-        lastuser = emalloc(cpus * sizeof(long long));
+        lastuser = emalloc(_cpus * sizeof(long long));
     if (!lastnice)
-        lastnice = emalloc(cpus * sizeof(long long));
+        lastnice = emalloc(_cpus * sizeof(long long));
     if (!lastsystem)
-        lastsystem = emalloc(cpus * sizeof(long long));
+        lastsystem = emalloc(_cpus * sizeof(long long));
     if (!lastidle)
-        lastidle = emalloc(cpus * sizeof(long long));
+        lastidle = emalloc(_cpus * sizeof(long long));
 
-    user = emalloc(cpus * sizeof(long long));
-    nice = emalloc(cpus * sizeof(long long));
-    system = emalloc(cpus * sizeof(long long));
-    idle = emalloc(cpus * sizeof(long long));
+    user = emalloc(_cpus * sizeof(long long));
+    nice = emalloc(_cpus * sizeof(long long));
+    system = emalloc(_cpus * sizeof(long long));
+    idle = emalloc(_cpus * sizeof(long long));
 
     if (!percent)
-        percent = calloc((cpus + 1), sizeof(double));
+        percent = calloc((_cpus + 1), sizeof(double));
 
     fp = fopen(PROCSTATFILE, "r");
     if (!fp)
         eprintf("can't open %s\n", PROCSTATFILE);
     fgets(buf, BUFSIZ, fp);
-    for (i = 0; i < cpus; i++) {
+    for (i = 0; i < _cpus; i++) {
         //if (lastuser[i] && lastnice[i] && lastsystem[i] && lastidle[i]) {
             fgets(buf, BUFSIZ, fp);
             r = sscanf(buf, "cpu%d %llu %llu %llu %llu",
@@ -110,7 +140,7 @@ double *cpuusage(void) {
     if (!fp)
         eprintf("can't open %s\n", PROCSTATFILE);
     fgets(buf, BUFSIZ, fp);
-    for (i = 0; i < cpus; i++) {
+    for (i = 0; i < _cpus; i++) {
         fgets(buf, BUFSIZ, fp);
         r = sscanf(buf, "cpu%d %llu %llu %llu %llu",
                 &cpuid, &lastuser[i], &lastnice[i], &lastsystem[i], &lastidle[i]);
