@@ -10,37 +10,25 @@
 #include <signal.h>
 #include <time.h>
 #include "all_cores.h"
+#include "general_cores.h"
+#include "general_stats.h"
 
 
 int NUMBER_OF_SAMPLES_PER_MINUTE = 60;
 int CPU_LIMIT = 5;
 int DECISION = 0;
 
-static double _cum_global_counter = 0;
-static double _peak = 0;
 static double _average = 0;
-static double _global_average = 0;
+
 
 static time_t  tick;
 static time_t  tock;
 static time_t  tack;
 
-double getCurrentValue();
+
 int calculate_average(double* CPU_Measurements, int index);
 bool read_parameters();
 void restart();
-void global_average(float newsample, int infinite_counter);
-void detect_peak(float newsample);
-void report_dump(int sig);
-
-static unsigned long long lastTotalUser, lastTotalUserLow, lastTotalSys, lastTotalIdle;
-
-void init(){
-    FILE* file = fopen("/proc/stat", "r");
-    fscanf(file, "cpu %llu %llu %llu %llu", &lastTotalUser, &lastTotalUserLow,
-        &lastTotalSys, &lastTotalIdle);
-    fclose(file);
-}
 
 int main(){
 	printf("CPU BENCHMARK - ©By RSA© - All rights reserved\n");
@@ -49,46 +37,37 @@ int main(){
 		printf("ERROR - PROGRAM HAS INVALID OR UNKNOWN PARAMETERS\n");		
 		return 1;	
 	}
+        //termination signals registration
 	signal(SIGINT, report_dump);
 	signal(SIGTERM, report_dump);
 	signal(SIGKILL, report_dump);
 
-	init();
+	if(!general_cores_init()){
+		printf("Error initializing");		
+		return 1;
+	}
+	if(!init_all_cores()){
+		printf("Error initializing");		
+		return 1;
+	} 
+	init_stats();
 	
+	
+	//local inits
 	double CPU_Measurements[NUMBER_OF_SAMPLES_PER_MINUTE];
-	double peak = 0;
+        memset(CPU_Measurements, 0, sizeof(double)*NUMBER_OF_SAMPLES_PER_MINUTE);
+
 	u_int64_t infinite_counter = 0; 
 	double newsample = 0;
-    	double *percent;
-
+    	double *all_newsample;
 	int average = 0;
-	bool halfsample = true;
-	memset(CPU_Measurements, 0, sizeof(double)*NUMBER_OF_SAMPLES_PER_MINUTE);
+	bool halfsample = true;	
 	
 	printf("Starting CPU load Monitoring\n Frequency set to: %d \n", NUMBER_OF_SAMPLES_PER_MINUTE);
-	//printf("CPU Load is: %lf\n", getCurrentValue()); //Debug message
 	time(&tick);	
-
-	FILE *fptr = fopen("fulldump.txt", "w"); 
-    	if (fptr == NULL){
- 
-	        printf("Could not open file"); 
-	        return 0; 
-	}
-	//gets number of cpus
-	int cpus = cpucount();
-	char name[20], filename[20];
-	FILE * cpuptr[10];
-
-	for(int n=0; n< cpus; n++){
-		sprintf(name, "logcpu%d", n);
-		printf("name: %s", name);
-		cpuptr[n] = fopen(name, "w");
-	    	if (cpuptr[n] == NULL){
-		        printf("Could not open file"); 
-		        return 0; 
-		}
-	}
+	
+	
+	
 	//fputs("CPU Samples: ", fptr);
 	
 	for(;;){
@@ -98,31 +77,34 @@ int main(){
 			//free running counter
 			infinite_counter++;
 			
-			//reads CPU sample
-			newsample = getCurrentValue();
-			//getting timestamp
+			//read CPU sample
+			newsample = get_global_cpu_usage();
+			//reading timestamp
 			time(&tock);
-			fprintf(fptr, "%d ",(int)(tock - tick));
-			fprintf(fptr, "%lf\n",newsample);	
+			//log the sample
+			general_cores_log((int)(tock - tick), &newsample);
+				
 #ifdef DEBUG
 			printf("New CPU Sample: %lf\n",newsample);
 #endif
+
 			//CPU Sample operations - cpu peak calculation
 			detect_peak(newsample);	
 			
 			//CPU Sample operations - last minute average
 			CPU_Measurements[index] = newsample;
+
 			//CPU Sample operations - global average
 			global_average(newsample, infinite_counter);
 			
-			//CPU Sample operations - individual usage
+
+			//read individual samples		
+			all_newsample = cpuusage();
+			//reading the timestamp
 			time(&tack);
-			percent = cpuusage();
-        		for (int n = 0; n < cpus; n++){
-            			//printf("cpu%d:%.2f%%\n", n, percent[n]);
-				fprintf(cpuptr[n], "%d ",(int)(tack - tick));
-				fprintf(cpuptr[n], "%lf\n", percent[n]);
-        		}		
+			//log the samples from all cpus
+			all_cpus_log((int)(tack - tick), all_newsample);
+        			
 			
 //uncomment the following lines to enable last minute average
 			/*if(halfsample){
@@ -146,26 +128,6 @@ int main(){
 	}
 
 	return 0;
-
-}
-void detect_peak(float newsample){
-
-	if(newsample > _peak){
-		_peak = newsample;
-	}
-#ifdef DEBUG
-	printf("Peak CPU load: %lf\n", _peak);
-#endif
-}
-
-void global_average(float newsample, int infinite_counter){
-
-	_cum_global_counter = _cum_global_counter + newsample;
-	_global_average = _cum_global_counter / ((float)infinite_counter);
-
-#ifdef DEBUG
-	printf("Global CPU load: %lf\n", _global_average);
-#endif
 
 }
 
@@ -244,50 +206,6 @@ void restart(){
 	reboot(RB_AUTOBOOT);
 }
 
-void report_dump(int sig){
-	FILE *fptr = fopen("cpu_report.txt", "w"); 
-    	if (fptr == NULL){
- 
-	        printf("Could not open file"); 
-	        return; 
-	}
-	fputs("CPU load average:", fptr);
-	fprintf(fptr, "%lf%%\n",_global_average);
-	//fputs("CPU last minute load average:", fptr);
-	//fprintf(fptr, "%lf%%\n",_average);
-	fputs("CPU load peak:", fptr);
-	fprintf(fptr, "%lf%%\n",_peak);
-	exit(0);
-}
 
-double getCurrentValue(){
-    double percent;
-    FILE* file;
-    unsigned long long totalUser, totalUserLow, totalSys, totalIdle, total;
 
-    file = fopen("/proc/stat", "r");
-    fscanf(file, "cpu %llu %llu %llu %llu", &totalUser, &totalUserLow,
-        &totalSys, &totalIdle);
-    fclose(file);
 
-    if (totalUser < lastTotalUser || totalUserLow < lastTotalUserLow ||
-        totalSys < lastTotalSys || totalIdle < lastTotalIdle){
-        //Overflow detection. Just skip this value.
-        percent = -1.0;
-    }
-    else{
-        total = (totalUser - lastTotalUser) + (totalUserLow - lastTotalUserLow) +
-            (totalSys - lastTotalSys);
-        percent = total;
-        total += (totalIdle - lastTotalIdle);
-        percent /= total;
-        percent *= 100;
-    }
-
-    lastTotalUser = totalUser;
-    lastTotalUserLow = totalUserLow;
-    lastTotalSys = totalSys;
-    lastTotalIdle = totalIdle;
-
-    return percent;
-}
