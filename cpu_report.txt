@@ -1,2 +1,0 @@
-CPU load average:1.374394%
-CPU load peak:11.450381%
