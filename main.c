@@ -12,11 +12,13 @@
 #include "all_cores.h"
 #include "general_cores.h"
 #include "general_stats.h"
+#include "pid_usage.h"
 
 
-int NUMBER_OF_SAMPLES_PER_MINUTE = 60;
-int CPU_LIMIT = 5;
-int DECISION = 0;
+static int NUMBER_OF_SAMPLES_PER_MINUTE = 60;
+static int CPU_LIMIT = 5;
+static int DECISION = 0;
+static int PIDMONITOR = 0;
 
 static double _average = 0;
 
@@ -24,11 +26,13 @@ static double _average = 0;
 static time_t  tick;
 static time_t  tock;
 static time_t  tack;
+static time_t  teck;
 
 
 int calculate_average(double* CPU_Measurements, int index);
 bool read_parameters();
 void restart();
+
 
 int main(){
 	printf("CPU BENCHMARK - ©By RSA© - All rights reserved\n");
@@ -50,6 +54,10 @@ int main(){
 		printf("Error initializing");		
 		return 1;
 	} 
+	if(!pid_usage_init(PIDMONITOR)){
+		printf("Error initializing");		
+		return 1;
+	}
 	init_stats();
 	
 	
@@ -62,11 +70,11 @@ int main(){
     	double *all_newsample;
 	int average = 0;
 	bool halfsample = true;	
+	u_int8_t cpuid = 0;
+	float pid_usage = 0.0;
 	
 	printf("Starting CPU load Monitoring\n Frequency set to: %d \n", NUMBER_OF_SAMPLES_PER_MINUTE);
 	time(&tick);	
-	
-	
 	
 	//fputs("CPU Samples: ", fptr);
 	
@@ -104,7 +112,12 @@ int main(){
 			time(&tack);
 			//log the samples from all cpus
 			all_cpus_log((int)(tack - tick), all_newsample);
-        			
+        		
+			
+ 			/*PID monitor stuff*/
+			pid_usage = get_pid_usage(&cpuid);
+			time(&teck);
+			dump_pid_report((int)(teck - tick), pid_usage, cpuid);
 			
 //uncomment the following lines to enable last minute average
 			/*if(halfsample){
@@ -124,7 +137,7 @@ int main(){
 			}*/
 			
 		}
-		halfsample = false;
+		//halfsample = false;
 	}
 
 	return 0;
@@ -187,6 +200,9 @@ bool read_parameters(){
 
 			else if (strcmp((const char*)tmpstr1, "comparison") == 0){
 			    DECISION = atoi((const char*)tmpstr2);
+			}
+			else if (strcmp((const char*)tmpstr1, "pid") == 0){
+			    PIDMONITOR = atoi((const char*)tmpstr2);
 			}
 			
 			else {
