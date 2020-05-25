@@ -49,6 +49,20 @@ for f in logpid*; do
 done
 
 
+
+gnuplot -p << EOF
+set datafile separator " "
+set xlabel "time s"
+set ylabel "CPU load %"
+set yrange [0:100]
+set title "CPU load analysis"
+set terminal pngcairo size 1000,800 enhanced font 'Verdana,10'
+set output "all_pid.png"
+plot for [i=0:6]  sprintf('logpid_cpu%i', i) using 1:2 w linespoints title 'cpu'.i.''
+EOF
+
+
+
 gnuplot -p << EOF
 set datafile separator " "
 set xlabel "time s"
@@ -57,8 +71,10 @@ set yrange [0:100]
 set title "CPU load analysis"
 set terminal pngcairo size 1000,800 enhanced font 'Verdana,10'
 set output "all.png"
-plot for [i=0:6]  sprintf('logcpu%i', i) using 1:2 smooth bezier title 'cpu'.i.''
+plot for [i=0:6]  sprintf('logcpu%i', i) using 1:2 w linespoints title 'cpu'.i.''
 EOF
+
+#soft alternative for comparison: using 1:2 w linespoints title 'cpu'.i.''
 cd -
 
 exit 0
