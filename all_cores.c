@@ -15,7 +15,7 @@ static int _cpus;
 int cpucount(void);
 
 bool init_all_cores(){
-	char name[20], filename[20];
+	char name[20];
 
 	_cpus=cpucount();
 
