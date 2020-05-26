@@ -2,10 +2,12 @@
 
 mkdir -p reports
 
-mv log* reports
-mv fulldump.txt reports
+mv build/log* reports
+mv build/fulldump.txt reports
 
 cd reports
+
+#CPU generic load
 gnuplot -p << EOF
 set datafile separator " "
 set xlabel "time s"
@@ -17,6 +19,7 @@ set output 'full_plot.png'
 plot 'fulldump.txt' using 1:2 w linespoints title 'cpu global usage', 'fulldump.txt' with points notitle
 EOF
 
+#CPU load by core
 i=0
 for f in logcpu*; do
 	echo $f
@@ -32,6 +35,7 @@ for f in logcpu*; do
 	plot '${f}' using 1:2 w linespoints title 'cpu$i', '${f}' with points notitle
 	EOF
 done
+#Proccess load by CPU by core
 i=0
 for f in logpid*; do
 	echo $f
@@ -49,6 +53,20 @@ for f in logpid*; do
 done
 
 
+#All proccess load by CPU by core - same graph
+gnuplot -p << EOF
+set datafile separator " "
+set xlabel "time s"
+set ylabel "CPU load %"
+set yrange [0:100]
+set title "CPU load analysis"
+set terminal pngcairo size 1000,800 enhanced font 'Verdana,10'
+set output "all_pid.png"
+plot for [i=0:6]  sprintf('logpid_cpu%i', i) using 1:2 w linespoints title 'cpu'.i.''
+EOF
+
+
+#All cpus load - same graph
 gnuplot -p << EOF
 set datafile separator " "
 set xlabel "time s"
@@ -57,8 +75,10 @@ set yrange [0:100]
 set title "CPU load analysis"
 set terminal pngcairo size 1000,800 enhanced font 'Verdana,10'
 set output "all.png"
-plot for [i=0:6]  sprintf('logcpu%i', i) using 1:2 smooth bezier title 'cpu'.i.''
+plot for [i=0:6]  sprintf('logcpu%i', i) using 1:2 w linespoints title 'cpu'.i.''
 EOF
+
+#soft alternative for comparison: using 1:2 w linespoints title 'cpu'.i.''
 cd -
 
 exit 0

@@ -9,10 +9,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
-#include "all_cores.h"
-#include "general_cores.h"
-#include "general_stats.h"
-#include "pid_usage.h"
+#include "../inc/all_cores.h"
+#include "../inc/general_cores.h"
+#include "../inc/general_stats.h"
+#include "../inc/pid_usage.h"
 
 
 static int NUMBER_OF_SAMPLES_PER_MINUTE = 60;
@@ -68,8 +68,8 @@ int main(){
 	u_int64_t infinite_counter = 0; 
 	double newsample = 0;
     	double *all_newsample;
-	int average = 0;
-	bool halfsample = true;	
+	//int average = 0;
+	//bool halfsample = true;	
 	u_int8_t cpuid = 0;
 	float pid_usage = 0.0;
 	
@@ -171,7 +171,7 @@ bool read_parameters(){
 	volatile char tmpstr1[50];
 	volatile char tmpstr2[50];
 	
-	FILE * fr = fopen("parameters.txt", "rt");
+	FILE * fr = fopen("../parameters.txt", "rt");
 	char tempbuff[500];
 
 	if(fr == NULL){

@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "all_cores.h"
+#include "../inc/all_cores.h"
+#include "../inc/pid_usage.h"
 
 static unsigned long int pid_usage, pid_usage_old;
 static unsigned long int cpu_usage, cpu_usage_old;
@@ -19,7 +20,7 @@ bool pid_usage_init(int pidmonitor){
 	char name[50];
 
 	for(int n=0; n< num_cpus; n++){
-		sprintf(name, "logpid%d_cpu%d", pid_to_monitor, cpu);
+		sprintf(name, "logpid_cpu%d", n);
 		all_cores_pid_fileptr[n] = fopen(name, "w");
 	    	if (all_cores_pid_fileptr[n] == NULL){
 		        printf("Could not open file"); 

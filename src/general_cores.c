@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include "../inc/general_cores.h"
 
 #define PROCSTATFILE "/proc/stat"
 

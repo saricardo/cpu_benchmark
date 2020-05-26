@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/sysinfo.h>
 #include <stdbool.h>
+#include "../inc/all_cores.h"
 
 #define PROCSTATFILE "/proc/stat"
 
@@ -38,6 +39,7 @@ bool all_cpus_log(int timestamp, double * cpu_log){
 		fprintf(all_cores_fileptr[n], "%d ",timestamp);
 		fprintf(all_cores_fileptr[n], "%lf\n", cpu_log[n]);
         }
+	return true;
 
 }
 
