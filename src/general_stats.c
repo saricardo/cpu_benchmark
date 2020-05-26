@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../inc/general_stats.h"
 
 static float _peak;
 static float _global_average;

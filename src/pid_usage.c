@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "all_cores.h"
+#include "../inc/all_cores.h"
+#include "../inc/pid_usage.h"
 
 static unsigned long int pid_usage, pid_usage_old;
 static unsigned long int cpu_usage, cpu_usage_old;
