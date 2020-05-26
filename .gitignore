@@ -1,3 +1,6 @@
 reports/*
+build/*
+*.o
 *.out
 cpu_report.txt
+
