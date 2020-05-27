@@ -1,15 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../inc/general_stats.h"
+#include "../inc/definitions.h"
+#include "../inc/all_cores.h"
 
 static float _peak;
+static float _peaks[10];
 static float _global_average;
 static float _cum_global_counter;
+static UINT8 _num_cores;
 
 void init_stats(){
 	_peak = 0.0;
 	_global_average = 0.0;
 	_cum_global_counter = 0.0;
+	_num_cores=cpucount();
+	for(UINT8 i=0; i<10; i++){
+		_peaks[i]=0;	
+	}
 }
 
 void detect_peak(float newsample){
@@ -20,6 +28,15 @@ void detect_peak(float newsample){
 #ifdef DEBUG
 	printf("Peak CPU load: %lf\n", _peak);
 #endif
+}
+
+void detect_core_peak(float* newsample){
+	
+	for(UINT8 i=0; i<_num_cores; i++){
+		if(newsample[i] > _peaks[i]){
+			_peaks[i] = newsample[i];
+		}
+	}
 }
 
 
@@ -36,9 +53,9 @@ void global_average(float newsample, int infinite_counter){
 
 
 void report_dump(int sig){
-	FILE *fptr = fopen("cpu_report.txt", "w"); 
+	FILE *fptr = fopen("cpu_report_stats.txt", "w"); 
   	if (fptr == NULL){ 
-	        printf("Could not open file"); 
+	        printf("Could not open file. Stats dump not generated\n"); 
 	        return; 
 	}
 	fputs("CPU load average:", fptr);
@@ -47,5 +64,10 @@ void report_dump(int sig){
 	//fprintf(fptr, "%lf%%\n",_average);
 	fputs("CPU load peak:", fptr);
 	fprintf(fptr, "%lf%%\n",_peak);
+	for(UINT8 i=0; i<_num_cores; i++){
+		fprintf(fptr, "CPU %d load peak:", i);
+		fprintf(fptr, "%lf%%\n",_peaks[i]);
+	}	
+
 	exit(0);
 }
