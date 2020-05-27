@@ -1,3 +1,4 @@
+#include <stdbool.h>
 
 double *cpuusage(void);
 int cpucount(void);
