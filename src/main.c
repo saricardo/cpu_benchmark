@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
 	if(mode == MODE_PROCCESS && pidmonitor == 0){
 		printf("Wrong usage. Please specify a pid as arg 2\n");
 		return 1;
-	}	
+	}
 
 	if(!read_parameters(mode)){
 		printf("ERROR - PROGRAM HAS INVALID OR UNKNOWN PARAMETERS\n");		
@@ -114,9 +114,9 @@ int main(int argc, char *argv[]){
 	time(&tick);	
 	
 	//fputs("CPU Samples: ", fptr);
-	
-	
-		
+
+
+
 	switch (mode){
 
     	case MODE_GENERIC:
@@ -278,7 +278,7 @@ return true;
 void restart(){
 	printf("WILL REBOOT NOW\n");
 	sync(); sync(); sync(); 
-	reboot(RB_AUTOBOOT);
+	//reboot(RB_AUTOBOOT);
 }
 
 
