@@ -90,7 +90,7 @@ float get_pid_usage(u_int8_t *cpu_id){
 	}
 
 	usage=((pid_delta)*100*num_cpus)/(float)(cpu_delta);
-	printf("process usage is: %lf on cpu: %hhd", usage, *cpu_id);
+	//printf("process usage is: %lf on cpu: %hhd", usage, *cpu_id);
 	return usage;
 
 }
