@@ -167,6 +167,7 @@ int main(int argc, char *argv[]){
 
 				//CPU average proccess usage
 				global_average(pid_usage, infinite_counter);
+				detect_pidcore_peak(cpuid, pid_usage);
 							
 			}
 		}	
