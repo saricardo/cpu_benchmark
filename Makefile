@@ -25,6 +25,7 @@ gen_amd64: $(OBJS)
 	$(MKDIR_P) $(BUILDPATH)
 	@echo "creating amd64 object..."
 	${CC} ${LINKERFLAG} $^ -o $(BUILDPATH)/$@
+	rm $(OBJS)
 
 %.o: $(SRCPATH)/%.c $(INCPATH)/*.h
 	@echo "Creating Object..."
