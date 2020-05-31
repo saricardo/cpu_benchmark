@@ -149,7 +149,7 @@ int main(int argc, char *argv[]){
 				all_cpus_log((int)(tack - tick), all_newsample);
 /*CPU individual core peaks*/				
 				//detect core peaks
-				detect_core_peak((float *)all_newsample);
+				detect_core_peak(all_newsample);
 						
 			}	
 		}

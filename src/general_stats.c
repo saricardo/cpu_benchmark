@@ -16,7 +16,7 @@ void init_stats(){
 	_cum_global_counter = 0.0;
 	_num_cores=cpucount();
 	for(UINT8 i=0; i<10; i++){
-		_peaks[i]=0;	
+		_peaks[i]=0.0;	
 	}
 }
 
@@ -30,13 +30,23 @@ void detect_peak(float newsample){
 #endif
 }
 
-void detect_core_peak(float* newsample){
+/*Individual core peak*/
+void detect_core_peak(double* newsample){
 	
 	for(UINT8 i=0; i<_num_cores; i++){
+		//printf("currpeak: %lf and currsample: %lf\n", _peaks[i], newsample[i]);
 		if(newsample[i] > _peaks[i]){
-			_peaks[i] = newsample[i];
+			_peaks[i] = (float)newsample[i];
 		}
 	}
+		}
+/*Individual core peak per proccess*/
+void detect_pidcore_peak(UINT8 cpuid, float newsample){
+	
+	if(newsample > _peaks[cpuid]){
+		_peaks[cpuid] = newsample;
+	}
+	
 }
 
 
