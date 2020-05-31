@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "../inc/all_cores.h"
 #include "../inc/pid_usage.h"
+#include "../inc/general_stats.h"
 
 static unsigned long int pid_usage, pid_usage_old;
 static unsigned long int cpu_usage, cpu_usage_old;
@@ -41,6 +42,11 @@ unsigned long int get_process_usage(int pid, u_int8_t* cpu_id){
 	sprintf(filepath, "/proc/%d/stat", pid);
 
 	file = fopen(filepath, "r");
+	if(file == NULL){
+		printf("Proccess is not running\n Exiting\n");
+		report_dump(0);
+		exit(0);		
+	}
 	fscanf(file, "%d %s %c %d %d %d %d %d %d %d %d %d %d %lu %lu %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %hhd",
 		 &dummyint, dummystr, dummystr, &dummyint, &dummyint, &dummyint,
 		 &dummyint, &dummyint, &dummyint, &dummyint, &dummyint, &dummyint,
@@ -90,7 +96,7 @@ float get_pid_usage(u_int8_t *cpu_id){
 	}
 
 	usage=((pid_delta)*100*num_cpus)/(float)(cpu_delta);
-	printf("process usage is: %lf on cpu: %hhd", usage, *cpu_id);
+	//printf("process usage is: %lf on cpu: %hhd", usage, *cpu_id);
 	return usage;
 
 }

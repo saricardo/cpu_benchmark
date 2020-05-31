@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
 	if(mode == MODE_PROCCESS && pidmonitor == 0){
 		printf("Wrong usage. Please specify a pid as arg 2\n");
 		return 1;
-	}	
+	}
 
 	if(!read_parameters(mode)){
 		printf("ERROR - PROGRAM HAS INVALID OR UNKNOWN PARAMETERS\n");		
@@ -114,9 +114,9 @@ int main(int argc, char *argv[]){
 	time(&tick);	
 	
 	//fputs("CPU Samples: ", fptr);
-	
-	
-		
+
+
+
 	switch (mode){
 
     	case MODE_GENERIC:
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]){
 				all_cpus_log((int)(tack - tick), all_newsample);
 /*CPU individual core peaks*/				
 				//detect core peaks
-				detect_core_peak((float *)all_newsample);
+				detect_core_peak(all_newsample);
 						
 			}	
 		}
@@ -167,6 +167,7 @@ int main(int argc, char *argv[]){
 
 				//CPU average proccess usage
 				global_average(pid_usage, infinite_counter);
+				detect_pidcore_peak(cpuid, pid_usage);
 							
 			}
 		}	
@@ -278,7 +279,7 @@ return true;
 void restart(){
 	printf("WILL REBOOT NOW\n");
 	sync(); sync(); sync(); 
-	reboot(RB_AUTOBOOT);
+	//reboot(RB_AUTOBOOT);
 }
 
 
