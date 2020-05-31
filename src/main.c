@@ -81,6 +81,10 @@ int main(int argc, char *argv[]){
 				printf("Error initializing all cores\n");		
 				return 1;
 			} 
+			if(!general_cores_dump_init()){
+				printf("Error initializing all cores dump file\n");		
+				return 1;
+			} 
       		break;
 		
 		case MODE_PROCCESS:
@@ -89,6 +93,10 @@ int main(int argc, char *argv[]){
 				printf("Error initializing pid monitor\n");		
 				return 1;
 			}
+			if(!general_cores_dump_init()){
+				printf("Error initializing all cores dump file\n");		
+				return 1;
+			} 
       		break;
 
 		case MODE_MONITOR:
@@ -108,7 +116,8 @@ int main(int argc, char *argv[]){
 	int average = 0;
 	bool halfsample = true;	
 	u_int8_t cpuid = 0;
-	float pid_usage = 0.0;
+	double pid_usage = 0.0;
+	double global_pid_usage = 0.0;
 	
 	printf("Starting CPU load Monitoring\n Frequency set to: %d \n", NUMBER_OF_SAMPLES_PER_MINUTE);
 	time(&tick);	
@@ -162,12 +171,15 @@ int main(int argc, char *argv[]){
 				/*PID monitor stuff*/
 				pid_usage = get_pid_usage(&cpuid);
 				time(&teck);
-				dump_pid_report((int)(teck - tick), pid_usage, cpuid);
-				/*CPU overall average*/
+				dump_pid_report((int)(teck - tick), (float)pid_usage, cpuid);
+
+				/*PID monitor general usage*/
+				global_pid_usage=get_pid_global_usage((float) pid_usage);
+				general_cores_log((int)(teck - tick), &global_pid_usage);
 
 				//CPU average proccess usage
-				global_average(pid_usage, infinite_counter);
-				detect_pidcore_peak(cpuid, pid_usage);
+				global_average((float)pid_usage, infinite_counter);
+				detect_pidcore_peak(cpuid, (float)pid_usage);
 							
 			}
 		}	

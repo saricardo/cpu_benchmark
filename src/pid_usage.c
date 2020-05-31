@@ -100,6 +100,12 @@ float get_pid_usage(u_int8_t *cpu_id){
 
 }
 
+float get_pid_global_usage(float pid_usage){
+	float usage=pid_usage/num_cpus;
+	return usage;
+
+}
+
 void dump_pid_report(int timestamp, float usage, u_int8_t cpuid){
 	
 	for (int n = 0; n < num_cpus; n++){
