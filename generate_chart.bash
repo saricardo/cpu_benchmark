@@ -3,8 +3,9 @@
 mkdir -p reports
 
 if ls build/log* 1> /dev/null 2>&1; then
-    	mv build/log* reports
+    mv build/log* reports
 	mv build/fulldump.txt reports
+	mv build/cpu_report_stats.txt reports
 fi
 
 cd reports
