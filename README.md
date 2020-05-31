@@ -33,4 +33,5 @@ Chart Generation:
 
 
 Note: When the charts refer to general cummulative CPU usage, the CPU values are printed in percentage and refer to the relative CPU capacity disregarding the number of cpu cores. Ex: In a 8 cores system 100% refers to 8 cores fully used, whereas in a 4 core system 100% refers to 4 cores fully used. In a 2 cores system 50% referes to 1 core on average. So the 100% always refers to the totallity of CPU cores available.
+Sometimes peak values might overcome 100% a little. This small error is introduced when doing calculations for measuring the cpu usage in a given time slot.
 
