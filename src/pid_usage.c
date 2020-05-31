@@ -63,9 +63,8 @@ unsigned long int get_process_usage(int pid, u_int8_t* cpu_id){
 }
 
 unsigned long long get_globalcpu_time_usage(){
-    double percent;
     FILE* file;
-    unsigned long long totalUser, totalUserLow, totalSys, totalIdle, total;
+    unsigned long long totalUser, totalUserLow, totalSys, totalIdle;
 
     file = fopen("/proc/stat", "r");
     fscanf(file, "cpu %llu %llu %llu %llu", &totalUser, &totalUserLow,
