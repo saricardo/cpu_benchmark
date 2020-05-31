@@ -12,6 +12,17 @@
 static unsigned long long lastTotalUser, lastTotalUserLow, lastTotalSys, lastTotalIdle;
 static FILE *general_dump_fileptr;
 
+bool general_cores_dump_init(){
+    /*init dump log related*/
+    general_dump_fileptr = fopen("fulldump.txt", "w"); 
+    if (general_dump_fileptr == NULL){ 
+	printf("Could not open fulldump.txt"); 
+        return false;
+    }
+
+    return true;
+}
+
 bool general_cores_init(){
     /*init /proc/stat related */
     FILE* proc_stat_fileptr = fopen(PROCSTATFILE, "r");
@@ -22,13 +33,6 @@ bool general_cores_init(){
     fscanf(proc_stat_fileptr, "cpu %llu %llu %llu %llu", &lastTotalUser, &lastTotalUserLow,
         &lastTotalSys, &lastTotalIdle);
     fclose(proc_stat_fileptr);
-
-    /*init dump log related*/
-    general_dump_fileptr = fopen("fulldump.txt", "w"); 
-    if (general_dump_fileptr == NULL){ 
-	printf("Could not open fulldump.txt"); 
-        return false;
-    }
 
     return true;
 }

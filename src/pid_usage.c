@@ -63,9 +63,8 @@ unsigned long int get_process_usage(int pid, u_int8_t* cpu_id){
 }
 
 unsigned long long get_globalcpu_time_usage(){
-    double percent;
     FILE* file;
-    unsigned long long totalUser, totalUserLow, totalSys, totalIdle, total;
+    unsigned long long totalUser, totalUserLow, totalSys, totalIdle;
 
     file = fopen("/proc/stat", "r");
     fscanf(file, "cpu %llu %llu %llu %llu", &totalUser, &totalUserLow,
@@ -97,6 +96,12 @@ float get_pid_usage(u_int8_t *cpu_id){
 
 	usage=((pid_delta)*100*num_cpus)/(float)(cpu_delta);
 	//printf("process usage is: %lf on cpu: %hhd", usage, *cpu_id);
+	return usage;
+
+}
+
+float get_pid_global_usage(float pid_usage){
+	float usage=pid_usage/num_cpus;
 	return usage;
 
 }

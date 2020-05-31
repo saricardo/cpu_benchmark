@@ -6,10 +6,10 @@ CC = gcc
 
 CCT = aarch64-linux-gnu-gcc
 
-SRCPATH := src
-INCPATH := inc
-BUILDPATH := build
-ROOTDIR := .
+SRCPATH := ../../src
+INCPATH := ../../inc
+BUILDPATH := ../../build
+ROOTDIR := ../..
 
 SRCS := $(wildcard $(SRCPATH)/*.c)
 OBJS := $(SRCS:%.c=%.o)

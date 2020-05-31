@@ -1,14 +1,16 @@
 #!/bin/bash
 
-mkdir -p reports
+foldername="$(date +%F+%X)"
 
 if ls build/log* 1> /dev/null 2>&1; then
-    mv build/log* reports
-	mv build/fulldump.txt reports
-	mv build/cpu_report_stats.txt reports
+	mkdir -p  reports/"$foldername"
+    	mv build/log* reports/"$foldername"
+	mv build/fulldump.txt reports/"$foldername"
+	mv build/cpu_report_stats.txt reports/"$foldername"
+	
 fi
 
-cd reports
+cd reports/"$foldername"
 
 
 if ls fulldump.txt 1> /dev/null 2>&1; then

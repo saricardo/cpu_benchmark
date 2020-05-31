@@ -2,14 +2,12 @@
 
 MKDIR_P = mkdir -p
 
-CC = gcc
+CC = aarch64-linux-gnu-gcc
 
-CCT = aarch64-linux-gnu-gcc
-
-SRCPATH := src
-INCPATH := inc
-BUILDPATH := build
-ROOTDIR := .
+SRCPATH := ../../src
+INCPATH := ../../inc
+BUILDPATH := ../../build
+ROOTDIR := ../..
 
 SRCS := $(wildcard $(SRCPATH)/*.c)
 OBJS := $(SRCS:%.c=%.o)
@@ -19,11 +17,11 @@ BIN := $(wildcard $(BUILDPATH)/*)
 CFLAGS = -Wall -Idir
 LINKERFLAG = -lm
 
-all: gen_amd64
+all: gen_arm64
 
-gen_amd64: $(OBJS)
+gen_arm64: $(OBJS)
 	$(MKDIR_P) $(BUILDPATH)
-	@echo "creating amd64 object..."
+	@echo "creating arm64 object..."
 	${CC} ${LINKERFLAG} $^ -o $(BUILDPATH)/$@
 	rm $(OBJS)
 
