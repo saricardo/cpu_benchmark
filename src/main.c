@@ -67,7 +67,9 @@ int main(int argc, char *argv[]){
 	signal(SIGINT, report_dump);
 	signal(SIGTERM, report_dump);
 	signal(SIGKILL, report_dump);
-	
+	signal(SIGQUIT, report_dump);
+	signal(SIGHUP, report_dump);
+
 	//inits
 	switch (mode){
 
