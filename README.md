@@ -19,10 +19,10 @@ Or, called with the auxiliary script:
 
 More parameters can be configured on file parameters.txt:
 
-	- "[all modes] The frequency of cpu usage samples can be adjusted with the parameter: 'nsamplesperminute'"
-More than two samples per second may be to heavy, depending on your system.
+"[all modes] The frequency of cpu usage samples can be adjusted with the parameter: 'nsamplesperminute'"
+Too many samples per second may be to heavy, depending on your system.
 	
-	- "[mode 2 only] The 'comparison' parameter (1 or 0) is used to configure if you want to trigger an action in case the average CPU usage over the last minute goes above or below a given threashold. usagelimit is that threshold. If comparison is 0, then the action is triggered if the average drops below the threshold, if the threshold is 1 then the action is triggered above the threshold."
+"[mode 2 only] The 'comparison' parameter (1 or 0) is used to configure if you want to trigger an action in case the average CPU usage over the last minute goes above or below a given threashold. usagelimit is that threshold. If comparison is 0, then the action is triggered if the average drops below the threshold, if the threshold is 1 then the action is triggered above the threshold."
 
 To stop data collection just stop the application with ctrl-c (SIGINT) at any time.
 
