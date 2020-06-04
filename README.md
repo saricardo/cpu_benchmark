@@ -11,25 +11,25 @@ It supports 3 operating modes:
 
 
 Usage should be as below:
-	./gen_amd64 <mode> <pid>[optional]
+	- "./gen_amd64 <mode> <pid>[optional]"
 
 Or, called with the auxiliary script:
 
-	./start_bench.sh <mode> <nameofproccess>[optional]
+	- "./start_bench.sh <mode> <nameofproccess>[optional]"
 
 More parameters can be configured on file parameters.txt:
 
-	- [all modes] The frequency of cpu usage samples can be adjusted with the parameter: 'nsamplesperminute'
+	- "[all modes] The frequency of cpu usage samples can be adjusted with the parameter: 'nsamplesperminute'"
 More than two samples per second may be to heavy, depending on your system.
 	
-	- [mode 2 only] The 'comparison' parameter (1 or 0) is used to configure if you want to trigger an action in case the average CPU usage over the last minute goes above or below a given threashold. usagelimit is that threshold. If comparison is 0, then the action is triggered if the average drops below the threshold, if the threshold is 1 then the action is triggered above the threshold.
+	- "[mode 2 only] The 'comparison' parameter (1 or 0) is used to configure if you want to trigger an action in case the average CPU usage over the last minute goes above or below a given threashold. usagelimit is that threshold. If comparison is 0, then the action is triggered if the average drops below the threshold, if the threshold is 1 then the action is triggered above the threshold."
 
 To stop data collection just stop the application with ctrl-c (SIGINT) at any time.
 
 Chart Generation:
 	To generate charts on the collected data, run:
-	./generate_chart.bash
-	Charts and reports will be placed on folder: reports/
+	- "./generate_chart.bash"
+	- Charts and reports will be placed on folder: reports/
 
 
 Note: When the charts refer to general cummulative CPU usage, the CPU values are printed in percentage and refer to the relative CPU capacity disregarding the number of cpu cores. Ex: In a 8 cores system 100% refers to 8 cores fully used, whereas in a 4 core system 100% refers to 4 cores fully used. In a 2 cores system 50% referes to 1 core on average. So the 100% always refers to the totallity of CPU cores available.

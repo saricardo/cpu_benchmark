@@ -1,4 +1,4 @@
-nsamplesperminute : 120
+nsamplesperminute : 240
 usagelimit : 10
 comparison : 1
 pid : 8866
