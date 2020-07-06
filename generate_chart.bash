@@ -17,7 +17,7 @@ if ls fulldump.txt 1> /dev/null 2>&1; then
 	#CPU generic load
 	gnuplot -p << EOF
 	set datafile separator " "
-	set xlabel "time s"
+	set xlabel "sample N"
 	set ylabel "CPU load %"
 	set yrange [0:100]
 	set title "CPU load analysis"
@@ -35,7 +35,7 @@ if ls logcpu* 1> /dev/null 2>&1; then
 		i=$(($i+1))
 	    	gnuplot <<- EOF
 		set datafile separator " "
-		set xlabel "time s"
+		set xlabel "sample N"
 		set ylabel "CPU load %"
 		set yrange [0:100]
 		set title "CPU load analysis"
@@ -53,7 +53,7 @@ if ls logpid* 1> /dev/null 2>&1; then
 		i=$(($i+1))
 	    	gnuplot <<- EOF
 		set datafile separator " "
-		set xlabel "time s"
+		set xlabel "sample N"
 		set ylabel "CPU load %"
 		set yrange [0:100]
 		set title "CPU load analysis"
@@ -68,7 +68,7 @@ if ls logpid_cpu* 1> /dev/null 2>&1; then
 	#All proccess load by CPU by core - same graph
 	gnuplot -p << EOF
 	set datafile separator " "
-	set xlabel "time s"
+	set xlabel "sample N"
 	set ylabel "CPU load %"
 	set yrange [0:100]
 	set title "CPU load analysis"
@@ -82,7 +82,7 @@ if ls logcpu* 1> /dev/null 2>&1; then
 	#All cpus load - same graph
 	gnuplot -p << EOF
 	set datafile separator " "
-	set xlabel "time s"
+	set xlabel "sample N"
 	set ylabel "CPU load %"
 	set yrange [0:100]
 	set title "CPU load analysis"

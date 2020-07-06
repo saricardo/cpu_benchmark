@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
 				//reading timestamp
 				time(&tock);
 				//log the sample
-				general_cores_log((int)(tock - tick), &newsample);
+				general_cores_log(/*(int)(tock - tick)*/infinite_counter, &newsample);
 #ifdef DEBUG
 				printf("New CPU Sample: %lf\n",newsample);
 #endif
@@ -157,7 +157,7 @@ int main(int argc, char *argv[]){
 				//reading the timestamp
 				time(&tack);
 				//log the samples from all cpus
-				all_cpus_log((int)(tack - tick), all_newsample);
+				all_cpus_log(/*(int)(tack - tick)*/infinite_counter, all_newsample);
 /*CPU individual core peaks*/				
 				//detect core peaks
 				detect_core_peak(all_newsample);
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]){
 				/*PID monitor stuff*/
 				pid_usage = get_pid_usage(&cpuid);
 				time(&teck);
-				dump_pid_report((int)(teck - tick), (float)pid_usage, cpuid);
+				dump_pid_report(/*(int)(teck - tick)*/ infinite_counter, (float)pid_usage, cpuid);
 
 				/*PID monitor general usage*/
 				global_pid_usage=get_pid_global_usage((float) pid_usage);
