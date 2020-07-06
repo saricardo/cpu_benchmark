@@ -177,9 +177,8 @@ int main(int argc, char *argv[]){
 
 				/*PID monitor general usage*/
 				global_pid_usage=get_pid_global_usage((float) pid_usage);
-				general_cores_log((int)(teck - tick), &global_pid_usage);
+				general_cores_log(/*(int)(teck - tick)*/ infinite_counter, &global_pid_usage);
 
-				//CPU average proccess usage
 				global_average((float)pid_usage, infinite_counter);
 				detect_pidcore_peak(cpuid, (float)pid_usage);
 							
